@@ -11,8 +11,11 @@
   "author": "WR",
   "license": "ISC",
   "dependencies": {
+    "@mikro-orm/core": "^4.3.4",
+    "@mikro-orm/postgresql": "^4.3.4",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "pg": "^8.5.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
