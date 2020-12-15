@@ -8,8 +8,6 @@ import {
   Arg,
   Ctx,
   ObjectType,
-  
-
 } from "type-graphql";
 import argon2 from "argon2";
 
@@ -44,7 +42,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { em,  }: MyContext
+    @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
     if (options.username.length <= 2) {
       return {
@@ -92,7 +90,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { em, }: MyContext
+    @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, { username: options.username });
 
@@ -101,7 +99,13 @@ export class UserResolver {
         errors: [{ field: "username", message: "that username doesn't exist" }],
       };
     }
+    const valid = await argon2.verify(user.password, options.password);
+    if (!valid) {
+      return {
+        errors: [{ field: "password", message: "incorrect password" }],
+      };
+    }
 
-    return {user}
+    return { user };
   }
 }

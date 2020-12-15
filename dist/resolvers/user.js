@@ -68,7 +68,7 @@ UserResponse = __decorate([
     type_graphql_1.ObjectType()
 ], UserResponse);
 let UserResolver = class UserResolver {
-    register(options, { em, }) {
+    register(options, { em }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options.username.length <= 2) {
                 return {
@@ -113,12 +113,18 @@ let UserResolver = class UserResolver {
             return { user };
         });
     }
-    login(options, { em, }) {
+    login(options, { em }) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield em.findOne(User_1.User, { username: options.username });
             if (!user) {
                 return {
                     errors: [{ field: "username", message: "that username doesn't exist" }],
+                };
+            }
+            const valid = yield argon2_1.default.verify(user.password, options.password);
+            if (!valid) {
+                return {
+                    errors: [{ field: "password", message: "incorrect password" }],
                 };
             }
             return { user };
